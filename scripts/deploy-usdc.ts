@@ -1,15 +1,25 @@
-import { ethers } from "hardhat";
 import * as dotenv from "dotenv";
-import { USDC } from "../typechain-types";
+import { USDC } from "../typechain-types/index.js";
+import { network } from "hardhat";
 
 dotenv.config();
 
 async function main() {
   // Get the deployer's account
+  const { ethers } = await network.connect({
+    network: "moneymule",
+    chainType: "l1",
+  });
+  
   const [deployer] = await ethers.getSigners();
   
   console.log("Deploying USDC contract with the account:", deployer.address);
-  console.log("Account balance:", (await deployer.provider.getBalance(deployer.address)).toString());
+  
+  const provider = deployer.provider;
+  if (!provider) {
+    throw new Error("Provider is undefined");
+  }
+  console.log("Account balance:", (await provider.getBalance(deployer.address)).toString());
 
   // Deploy the USDC contract
   const USDC = await ethers.getContractFactory("USDC");

@@ -1,7 +1,21 @@
-import { ethers } from "hardhat";
+import { network } from "hardhat";
 
 async function main() {
   console.log("🚀 Setting up MoneyMule Demo...");
+
+  // Try to get ethers from network connection
+  let ethers: any;
+  try {
+    const connection = await network.connect();
+    ethers = (connection as any).ethers;
+    if (!ethers) {
+      throw new Error("ethers not available");
+    }
+  } catch (error) {
+    console.log("Falling back to dynamic import for ethers...");
+    const hre = await import("hardhat");
+    ethers = (hre as any).ethers;
+  }
 
   // Get signers
   const [owner, founder, investor1, investor2, investor3] = await ethers.getSigners();

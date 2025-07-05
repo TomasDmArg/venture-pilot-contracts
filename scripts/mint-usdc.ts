@@ -1,10 +1,24 @@
-import { ethers } from "hardhat";
+import { network } from "hardhat";
 import * as dotenv from "dotenv";
-import { USDC } from "../typechain-types";
+import { USDC } from "../typechain-types/index.js";
 
 dotenv.config();
 
 async function main() {
+  // Connect to the network first
+  const { ethers } = await network.connect({
+    network: "moneymule",
+    chainType: "l1",
+  });
+
+  // ethers should be available globally with hardhat-toolbox-mocha-ethers
+  if (!ethers) {
+    console.error("❌ ethers is not available. Make sure hardhat-toolbox-mocha-ethers is properly configured.");
+    return;
+  }
+
+  console.log("✅ Ethers is available globally");
+
   // Check if contract address is provided
   const contractAddress = process.env.USDC_CONTRACT_ADDRESS;
   if (!contractAddress) {
@@ -14,6 +28,11 @@ async function main() {
 
   // Get the deployer's account
   const [deployer] = await ethers.getSigners();
+
+  if (!deployer.provider) {
+    console.error("❌ Provider is not available. Make sure the account is connected to a provider.");
+    return;
+  }
   
   console.log("Minting USDC tokens with the account:", deployer.address);
   console.log("Account balance:", (await deployer.provider.getBalance(deployer.address)).toString());
