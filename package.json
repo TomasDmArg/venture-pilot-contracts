@@ -1,0 +1,27 @@
+{
+  "name": "money-mule-contracts",
+  "version": "1.0.0",
+  "description": "MoneyMule - Milestone-Based Funding Platform for hackathon demonstration",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:coverage": "hardhat coverage",
+    "deploy:local": "hardhat node",
+    "deploy:contracts": "hardhat ignition deploy ignition/modules/MoneyMule.ts --network localhost",
+    "demo": "hardhat run scripts/demo-setup.ts",
+    "demo:local": "hardhat run scripts/demo-setup.ts --network localhost",
+    "clean": "hardhat clean",
+    "typechain": "hardhat typechain"
+  },
+  "keywords": ["ethereum", "solidity", "hardhat", "defi", "funding", "milestone", "hackathon"],
+  "author": "MoneyMule Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.15"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.1.0"
+  }
+}
