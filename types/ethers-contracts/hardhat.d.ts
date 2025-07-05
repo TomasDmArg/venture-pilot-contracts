@@ -10,16 +10,24 @@ import * as Contracts from "./index.js";
 
 declare module "@nomicfoundation/hardhat-ethers/types" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
-  getContractFactory(name: 'MoneyMule', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.MoneyMule__factory>
+  getContractFactory(name: 'MockERC20', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.MockERC20__factory>
+getContractFactory(name: 'MoneyMuleFactory', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.MoneyMuleFactory__factory>
+getContractFactory(name: 'MoneyMuleRound', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.MoneyMuleRound__factory>
 getContractFactory(name: 'USDC', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.USDC__factory>
 
-  getContractAt(name: 'MoneyMule', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.MoneyMule>
+  getContractAt(name: 'MockERC20', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.MockERC20>
+getContractAt(name: 'MoneyMuleFactory', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.MoneyMuleFactory>
+getContractAt(name: 'MoneyMuleRound', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.MoneyMuleRound>
 getContractAt(name: 'USDC', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.USDC>
 
-  deployContract(name: 'MoneyMule', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MoneyMule>
+  deployContract(name: 'MockERC20', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockERC20>
+deployContract(name: 'MoneyMuleFactory', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MoneyMuleFactory>
+deployContract(name: 'MoneyMuleRound', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MoneyMuleRound>
 deployContract(name: 'USDC', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.USDC>
 
-  deployContract(name: 'MoneyMule', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MoneyMule>
+  deployContract(name: 'MockERC20', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockERC20>
+deployContract(name: 'MoneyMuleFactory', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MoneyMuleFactory>
+deployContract(name: 'MoneyMuleRound', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MoneyMuleRound>
 deployContract(name: 'USDC', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.USDC>
 
     // default types

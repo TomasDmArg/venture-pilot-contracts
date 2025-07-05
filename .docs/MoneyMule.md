@@ -29,7 +29,7 @@ Ensure you have the following configured before deployment:
    ```env
    PRIVATE_KEY=your_private_key_here
    MONEYMULE_RPC_URL=https://moneymule-2751721147387000-1.jsonrpc.sagarpc.io
-   MONEYMULE_CONTRACT_ADDRESS=0xF04452606df7c73c6297D1be299A496A381FBDe1
+   MONEYMULE_CONTRACT_ADDRESS=0xfe2546EA1718E293168E0Fc901F00DD1a59547dF
    ```
 
 2. **Node.js Dependencies**
@@ -153,7 +153,7 @@ npm run demo:local
 
 | Property | Value |
 |----------|-------|
-| **Contract Address** | `0xF04452606df7c73c6297D1be299A496A381FBDe1` |
+| **Contract Address** | `0xfe2546EA1718E293168E0Fc901F00DD1a59547dF` |
 | **Contract Name** | MoneyMule |
 | **Contract Owner** | `0xa6e4e006EeD9fEA0C378A42d32a033F4B4f4A15b` |
 | **Verification Delay** | 86400 seconds (24 hours) |
@@ -251,7 +251,7 @@ import { MoneyMule } from "./typechain-types";
 const provider = new ethers.JsonRpcProvider("https://moneymule-2751721147387000-1.jsonrpc.sagarpc.io");
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!, provider);
 const moneyMule = new ethers.Contract(
-    "0xF04452606df7c73c6297D1be299A496A381FBDe1",
+    "0xfe2546EA1718E293168E0Fc901F00DD1a59547dF",
     MoneyMuleABI,
     wallet
 ) as MoneyMule;
