@@ -6,6 +6,12 @@ A milestone-based funding platform with jury voting system for early-stage proje
 
 MoneyMule revolutionizes early-stage project funding by implementing a milestone-based approach where investors commit funds that are only released when specific project milestones are approved by an authorized jury. This system ensures accountability, reduces risk, and enables partial funding with community governance.
 
+## 📚 Documentation
+
+### 📖 Detailed Documentation
+- **[📋 MoneyMule Contract Guide](.docs/MoneyMule.md)** - Complete contract documentation, API reference, and usage examples
+- **[🪙 USDC Contract Guide](.docs/USDC.md)** - USDC deployment, configuration, and network specifications
+
 ### 🏗️ **Architecture**
 
 ```
@@ -50,7 +56,7 @@ MoneyMuleRound.sol       ──┐
 ```bash
 # Clone and setup
 git clone https://github.com/TomasDmArg/money-mule-contracts.git
-cd money-mule-contracts
+cd money-mule-contracts    
 npm install
 
 # Compile contracts
@@ -121,7 +127,7 @@ await roundContract.withdrawInvestment(0); // 0 = withdraw all available
 
 ### **Run All Tests**
 ```bash
-# Factory + Round system (V2)
+# Factory + Round system (Current)
 npx hardhat test test/MoneyMuleFactory.ts
 
 # Legacy tests (for reference)
@@ -223,15 +229,6 @@ npx hardhat run scripts/deploy-production.ts --network [network]
 
 # 🛠️ Factory Management (post-deployment operations)
 npx hardhat run scripts/manage-factory.ts --network [network]
-
-# 📤 Deploy USDC (for testing)
-npx hardhat run scripts/deploy-usdc.ts --network [network]
-
-# 🪙 Mint USDC (for testing)
-npx hardhat run scripts/mint-usdc.ts --network [network]
-
-# 🔍 Verify Contracts
-npx hardhat run scripts/verify-contract.ts --network [network]
 ```
 
 ### **🎯 Script Descriptions**
@@ -279,29 +276,16 @@ npx hardhat run scripts/deploy-factory.ts --network localhost
 npx hardhat run scripts/demo-factory.ts --network hardhat
 ```
 
-#### **Testnet Deployment**
+#### **Testnet/Production Deployment**
 ```bash
-# Deploy to testnet
-npx hardhat run scripts/deploy-production.ts --network [testnet]
+# Deploy to network
+npx hardhat run scripts/deploy-production.ts --network [network]
 
 # Verify contracts
-npx hardhat verify --network [testnet] [factory-address]
+npx hardhat verify --network [network] [factory-address]
 
 # Manage factory
-FACTORY_ADDRESS=[address] npx hardhat run scripts/manage-factory.ts --network [testnet]
-```
-
-#### **Production Deployment (Saga Chainlet)**
-```bash
-# Deploy factory
-npx hardhat run scripts/deploy-production.ts --network moneymule
-
-# Verify on block explorer
-npx hardhat verify --network moneymule [factory-address]
-
-# Set up management
-echo "FACTORY_ADDRESS=[address]" >> .env
-npx hardhat run scripts/manage-factory.ts --network moneymule
+FACTORY_ADDRESS=[address] npx hardhat run scripts/manage-factory.ts --network [network]
 ```
 
 ### **⚙️ Environment Setup**
@@ -309,12 +293,10 @@ npx hardhat run scripts/manage-factory.ts --network moneymule
 # Required for all networks
 PRIVATE_KEY=your-private-key-here
 
-# For additional accounts (deploy-factory.ts, demo-factory.ts)
+# For additional accounts (demo scripts)
 PRIVATE_KEY_2=second-account-private-key
 PRIVATE_KEY_3=third-account-private-key
-PRIVATE_KEY_4=fourth-account-private-key
-PRIVATE_KEY_5=fifth-account-private-key
-PRIVATE_KEY_6=sixth-account-private-key
+# ... (up to PRIVATE_KEY_6)
 
 # For Saga Chainlet
 SAGA_RPC_URL=https://your-saga-chainlet-rpc
@@ -387,21 +369,6 @@ event InvestmentWithdrawn(address indexed investor, uint256 amount);
 4. Founder cannot complete milestone
 5. Investors withdraw remaining funds
 6. Project marked as failed
-
-## 🚀 **Next Steps & Roadmap**
-
-### **Immediate Features**
-- [ ] Different voting mechanisms (unanimous, supermajority)
-- [ ] Timelock for critical decisions
-- [ ] Oracle integration for automated verification
-- [ ] Web dashboard for easy management
-
-### **Advanced Features**
-- [ ] Multi-token support
-- [ ] Proxy patterns for upgrades
-- [ ] Batch operations for gas optimization
-- [ ] Layer 2 deployments
-- [ ] Cross-chain compatibility
 
 ## 🤝 Contributing
 
