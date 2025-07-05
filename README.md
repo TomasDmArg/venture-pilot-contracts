@@ -1,50 +1,140 @@
-# MoneyMule 🎯
+# MoneyMule Smart Contracts 🎯
+
+![](https://img.shields.io/badge/Solidity-informational?style=flat&logo=solidity&logoColor=white&color=6aa6f8)
+![](https://img.shields.io/badge/Hardhat-informational?style=flat&logo=hardhat&logoColor=white&color=6aa6f8)
+![](https://img.shields.io/badge/TypeScript-informational?style=flat&logo=typescript&logoColor=white&color=6aa6f8)
+![](https://img.shields.io/badge/OpenZeppelin-informational?style=flat&logo=openzeppelin&logoColor=white&color=6aa6f8)
+![](https://img.shields.io/badge/Ethers.js-informational?style=flat&logo=ethereum&logoColor=white&color=6aa6f8)
+![](https://img.shields.io/badge/Saga-informational?style=flat&logo=blockchain&logoColor=white&color=6aa6f8)
 
 A milestone-based funding platform with jury voting system for early-stage projects. Built with Factory Pattern for scalability and advanced governance features.
+
+## 🏗️ MoneyMule Ecosystem
+
+| Repository | Description | Status |
+|------------|-------------|--------|
+| **[Frontend](https://github.com/TomasDmArg/money-mule)** | Next.js web application with React & Material-UI | ✅ Active |
+| **[Backend](https://github.com/TomasDmArg/money-mule-backend)** | Node.js API with Express & PostgreSQL | ✅ Active |
+| **[Smart Contracts](https://github.com/TomasDmArg/money-mule-contracts)** | Solidity contracts with Hardhat & TypeScript | ✅ Active |
 
 ## 🌟 Overview
 
 MoneyMule revolutionizes early-stage project funding by implementing a milestone-based approach where investors commit funds that are only released when specific project milestones are approved by an authorized jury. This system ensures accountability, reduces risk, and enables partial funding with community governance.
 
-## 📚 Documentation
+## 🏗️ Architecture
 
-### 📖 Detailed Documentation
-- **[📋 MoneyMule Contract Guide](.docs/MoneyMule.md)** - Complete contract documentation, API reference, and usage examples
-- **[🪙 USDC Contract Guide](.docs/USDC.md)** - USDC deployment, configuration, and network specifications
-
-### 🏗️ **Architecture**
-
+```mermaid
+graph TB
+    subgraph "Factory Layer"
+        Factory[MoneyMuleFactory]
+        Factory --> AuthorizeJurors[Authorize Jurors]
+        Factory --> CreateRounds[Create Rounds]
+        Factory --> TrackRounds[Track Rounds]
+    end
+    
+    subgraph "Round Layer"
+        Round1[MoneyMuleRound #1]
+        Round2[MoneyMuleRound #2]
+        RoundN[MoneyMuleRound #N]
+    end
+    
+    subgraph "Governance"
+        Jury[Jury Members]
+        Community[Community Triggers]
+        Founders[Project Founders]
+        Investors[Investors]
+    end
+    
+    Factory --> Round1
+    Factory --> Round2
+    Factory --> RoundN
+    
+    Jury --> Round1
+    Jury --> Round2
+    Jury --> RoundN
+    
+    Community --> Round1
+    Community --> Round2
+    Community --> RoundN
+    
+    Founders --> Round1
+    Founders --> Round2
+    Founders --> RoundN
+    
+    Investors --> Round1
+    Investors --> Round2
+    Investors --> RoundN
+    
+    classDef factory fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef round fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef governance fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    
+    class Factory factory
+    class Round1,Round2,RoundN round
+    class Jury,Community,Founders,Investors governance
 ```
-MoneyMuleFactory.sol     ──┐
-├─ Create & track rounds    │
-├─ Authorize jurors         │── Factory Layer
-├─ Global management        │
-└─ Emergency controls       │
-                           ──┘
-MoneyMuleRound.sol       ──┐
-├─ Individual rounds        │
-├─ Jury voting system       │── Round Layer  
-├─ Milestone management     │
-└─ Fund management          │
-                           ──┘
+
+## 🎯 System Flow
+
+```mermaid
+sequenceDiagram
+    participant F as Factory Owner
+    participant Founder as Project Founder
+    participant Investor as Investor
+    participant Jury as Jury Member
+    participant Community as Community
+    participant Round as Round Contract
+    
+    F->>+Factory: authorizeJuror(juror)
+    Factory-->>-F: ✅ Juror authorized
+    
+    Founder->>+Factory: createFundingRound(token, amount, deadline, milestones)
+    Factory->>+Round: Deploy new round
+    Round-->>-Factory: Round created
+    Factory-->>-Founder: Round ID & Address
+    
+    Founder->>+Round: whitelistInvestor(investor)
+    Round-->>-Founder: ✅ Investor whitelisted
+    
+    Investor->>+Round: invest(amount)
+    Round-->>-Investor: ✅ Investment recorded
+    
+    Note over Round: Funding deadline reached
+    Round->>Round: Move to Execution Phase
+    
+    Community->>+Round: triggerMilestoneDeadline(milestoneId)
+    Round-->>-Community: ✅ Voting started
+    
+    Jury->>+Round: castJuryVote(milestoneId, approve)
+    Round-->>-Jury: ✅ Vote recorded
+    
+    Note over Round: Jury approves milestone
+    
+    Founder->>+Round: completeMilestone(milestoneId)
+    Round-->>-Founder: ✅ Milestone completed
+    
+    Note over Round: 24h verification delay
+    
+    Founder->>+Round: releaseFunds(milestoneId)
+    Round-->>-Founder: 💰 Funds released
 ```
 
-## ✨ **Key Features**
+## ✨ Key Features
 
-### **🎯 Funding & Governance**
+### 🎯 **Funding & Governance**
 - **📊 Partial Funding**: Rounds can proceed with partial funding
 - **🗳️ Jury Voting**: 3 authorized wallets decide milestone approval
 - **⏰ Deadline System**: Specific deadlines per milestone
 - **🚫 Restricted Voting**: Only jury can vote (not founders/investors)
-- **🔄 Anyone Can Trigger**: Community can activate deadline voting
+- **🔄 Community Triggers**: Anyone can activate deadline voting
 
-### **🔐 Security & Controls**
-- **🏭 Factory Pattern**: Scalable and gas-optimized
+### 🔐 **Security & Controls**
+- **🏭 Factory Pattern**: Scalable and gas-optimized deployment
 - **🛡️ Security First**: ReentrancyGuard, SafeERC20, comprehensive validations
 - **🚨 Emergency Features**: Pause, cancel, withdrawal protections
 - **💰 Proportional Release**: Funds released proportionally to funding achieved
 
-### **💡 User Experience**
+### 💡 **User Experience**
 - **👥 Whitelist System**: Founder-controlled investor access
 - **🔄 Multiple Rounds**: Independent rounds per project
 - **📈 Transparent Tracking**: Full visibility of funding and milestones
@@ -52,33 +142,58 @@ MoneyMuleRound.sol       ──┐
 
 ## 🚀 Quick Start
 
-### Installation
 ```bash
 # Clone and setup
 git clone https://github.com/TomasDmArg/money-mule-contracts.git
-cd money-mule-contracts    
+cd money-mule-contracts
 npm install
 
 # Compile contracts
-npx hardhat compile
+npm run compile
 
 # Run tests
-npx hardhat test
+npm run test
 
-# Deploy demo
-npx hardhat run scripts/deploy-factory.ts
+# Deploy demo system
+npm run deploy:factory
 ```
 
-## 🎯 **How It Works**
+## 📦 Deployed Contracts
 
-### **1. 📊 Funding Phase**
+### 🏭 Factory System
+| Contract | Address | Network |
+|----------|---------|---------|
+| **MoneyMuleFactory** | `0xa1820208Dff37B39a8a324e82E3449283e21703b` | Saga Chainlet |
+| **USDC Token** | `0xA2bE65F0Bfb810eF7B17807F3cd10D428f989A4a` | Saga Chainlet |
+
+### 🌐 Network Details
+| Parameter | Value |
+|-----------|-------|
+| **Chain ID** | 2751721147387000 |
+| **RPC URL** | https://moneymule-2751721147387000-1.jsonrpc.sagarpc.io |
+| **Explorer** | https://moneymule-2751721147387000-1.sagaexplorer.io |
+
+## 📚 Documentation
+
+### 📖 Detailed Guides
+- **[📋 Smart Contract Documentation](.docs/MoneyMule.md)** - Complete technical documentation
+- **[🪙 USDC Token Guide](.docs/USDC.md)** - Token deployment and configuration
+
+## 🎯 Core Workflow
+
+### 1. **Setup Phase**
 ```typescript
-// 1. Factory owner authorizes jurors
+// Factory owner authorizes jurors
 await factory.authorizeJuror(juror1.address);
+await factory.authorizeJuror(juror2.address);
+await factory.authorizeJuror(juror3.address);
+```
 
-// 2. Founder creates round with milestones & deadlines
+### 2. **Round Creation**
+```typescript
+// Founder creates funding round
 const milestones = [{
-  description: "Development Phase",
+  description: "MVP Development",
   fundingAmount: ethers.parseEther("40"),
   deadline: fundingDeadline + 86400,
   juryWallets: [juror1, juror2, juror3]
@@ -90,51 +205,44 @@ const [roundId, roundContract] = await factory.createFundingRound(
   fundingDeadline,
   milestones
 );
-
-// 3. Founder whitelists investors
-await roundContract.whitelistInvestor(investor.address);
-
-// 4. Investors fund (ONLY during funding phase)
-await roundContract.invest(ethers.parseEther("50"));
 ```
 
-### **2. 🗳️ Execution Phase**
+### 3. **Investment Phase**
 ```typescript
-// 5. Anyone triggers milestone deadline
-await roundContract.triggerMilestoneDeadline(1);
+// Founder whitelists investors
+await round.whitelistInvestor(investor.address);
 
-// 6. Jury votes (ONLY authorized wallets)
-await roundContract.castJuryVote(1, true);  // Approve
-await roundContract.castJuryVote(1, false); // Reject
-
-// 7. Founder completes approved milestone
-await roundContract.completeMilestone(1);
-
-// 8. Funds released after verification delay
-await roundContract.releaseFunds(1);
+// Investors contribute funds
+await round.invest(ethers.parseEther("50"));
 ```
 
-### **3. 💰 Fund Management**
+### 4. **Milestone Execution**
 ```typescript
-// Investors can withdraw in various scenarios:
-// - After funding deadline failure
-// - After round cancellation  
-// - Proportional to unreleased funds
-await roundContract.withdrawInvestment(0); // 0 = withdraw all available
+// Community triggers milestone deadline
+await round.triggerMilestoneDeadline(1);
+
+// Jury votes on milestone completion
+await round.castJuryVote(1, true);  // Approve
+
+// Founder completes milestone
+await round.completeMilestone(1);
+
+// Funds released after verification delay
+await round.releaseFunds(1);
 ```
 
 ## 🧪 Testing
 
-### **Run All Tests**
+### **Test Suite**
 ```bash
-# Factory + Round system (Current)
-npx hardhat test test/MoneyMuleFactory.ts
+# Run all tests
+npm run test
 
-# Legacy tests (for reference)
-npx hardhat test test/MoneyMule.ts
+# Run with coverage
+npm run test:coverage
 
-# All tests
-npx hardhat test
+# Clean and rebuild
+npm run clean && npm run compile
 ```
 
 ### **Test Coverage**
@@ -146,7 +254,39 @@ npx hardhat test
 - ✅ Investment withdrawal & edge cases
 - ✅ Complete lifecycle integration tests
 
-## 📋 **Smart Contract API**
+## 🚀 Deployment Scripts
+
+### **Available Scripts**
+```bash
+# 🏭 Factory Deployment
+npm run deploy:factory          # Full demo deployment
+npm run deploy:production       # Production deployment
+npm run manage:factory          # Post-deployment management
+
+# 🎬 Demo & Testing
+npm run demo:factory           # Complete lifecycle demo
+npm run demo:factory:local     # Local demo
+
+# 🪙 USDC Token
+npm run deploy:usdc            # Deploy USDC token
+npm run mint:usdc              # Mint USDC tokens
+```
+
+### **Environment Setup**
+```env
+# Required
+PRIVATE_KEY=your-private-key-here
+FACTORY_ADDRESS=0xa1820208Dff37B39a8a324e82E3449283e21703b
+
+# For demo accounts
+PRIVATE_KEY_2=second-account-private-key
+PRIVATE_KEY_3=third-account-private-key
+
+# Network configuration
+SAGA_RPC_URL=https://moneymule-2751721147387000-1.jsonrpc.sagarpc.io
+```
+
+## 📋 Smart Contract API
 
 ### **MoneyMuleFactory**
 ```solidity
@@ -164,148 +304,21 @@ function revokeJuror(address juror) external;
 // View Functions
 function getRoundContract(uint256 roundId) external view returns (address);
 function getFounderRounds(address founder) external view returns (uint256[] memory);
-function getInvestorRounds(address investor) external view returns (uint256[] memory);
+function isAuthorizedJuror(address juror) external view returns (bool);
 ```
 
 ### **MoneyMuleRound**
 ```solidity
-// Funding Phase
+// Investment Functions
 function whitelistInvestor(address investor) external;
 function invest(uint256 amount) external;
-function moveToExecutionPhase() external;
+function withdrawInvestment(uint256 amount) external;
 
-// Jury Voting System
+// Milestone Functions
 function triggerMilestoneDeadline(uint256 milestoneId) external;
 function castJuryVote(uint256 milestoneId, bool approve) external;
-function finalizeMilestoneVoting(uint256 milestoneId) external;
-
-// Milestone Management
 function completeMilestone(uint256 milestoneId) external;
 function releaseFunds(uint256 milestoneId) external;
-
-// Investment Management
-function withdrawInvestment(uint256 amount) external;
-function getWithdrawableAmount(address investor) external view returns (uint256);
-```
-
-## 🔄 **User Flows**
-
-### **👑 For Founders**
-1. Create funding round with milestones & jury
-2. Whitelist trusted investors
-3. Wait for funding completion (full/partial)
-4. Complete milestones approved by jury
-5. Release funds after verification delay
-
-### **💰 For Investors**  
-1. Get whitelisted by founder
-2. Invest during funding phase only
-3. Monitor milestone progress
-4. Withdraw funds under specific conditions
-
-### **⚖️ For Jury Members**
-1. Get authorized by factory owner
-2. Vote on milestones when deadlines triggered
-3. Decide project continuation based on evidence
-
-### **🌍 For Community**
-1. Anyone can trigger milestone deadlines
-2. Transparent voting process observation
-3. Verify fund releases and project progress
-
-## 🌐 Deployment & Scripts
-
-### **📦 Available Scripts**
-
-```bash
-# 🚀 Main Deployment (with demo interactions)
-npx hardhat run scripts/deploy-factory.ts --network [network]
-
-# 🎬 Complete Demo (full lifecycle demonstration)  
-npx hardhat run scripts/demo-factory.ts --network hardhat
-
-# 🏭 Production Deployment (factory only)
-npx hardhat run scripts/deploy-production.ts --network [network]
-
-# 🛠️ Factory Management (post-deployment operations)
-npx hardhat run scripts/manage-factory.ts --network [network]
-```
-
-### **🎯 Script Descriptions**
-
-#### **1. deploy-factory.ts** - Main Deployment
-- Deploys complete system (Factory + MockERC20)
-- Authorizes demo jurors
-- Creates sample funding round
-- Demonstrates basic interactions
-- **Best for**: Development and testing
-
-#### **2. demo-factory.ts** - Complete Demo
-- Full lifecycle demonstration
-- Multiple participants (9 accounts)
-- Complete milestone execution
-- Jury voting simulation
-- Time manipulation for testing
-- **Best for**: Understanding system behavior
-
-#### **3. deploy-production.ts** - Production Ready
-- Deploys Factory only (no mock tokens)
-- Production-oriented output
-- Security reminders
-- Verification instructions
-- **Best for**: Mainnet/testnet deployment
-
-#### **4. manage-factory.ts** - Post-Deployment Management
-- Connect to existing factory
-- View factory status and rounds
-- Management operations guide
-- Example commands
-- **Best for**: Operating deployed factories
-
-### **🚀 Quick Deployment Guide**
-
-#### **Local Development**
-```bash
-# Start local node
-npx hardhat node
-
-# Deploy with demo (new terminal)
-npx hardhat run scripts/deploy-factory.ts --network localhost
-
-# Or run complete demo
-npx hardhat run scripts/demo-factory.ts --network hardhat
-```
-
-#### **Testnet/Production Deployment**
-```bash
-# Deploy to network
-npx hardhat run scripts/deploy-production.ts --network [network]
-
-# Verify contracts
-npx hardhat verify --network [network] [factory-address]
-
-# Manage factory
-FACTORY_ADDRESS=[address] npx hardhat run scripts/manage-factory.ts --network [network]
-```
-
-### **⚙️ Environment Setup**
-```env
-# Required for all networks
-PRIVATE_KEY=your-private-key-here
-
-# For additional accounts (demo scripts)
-PRIVATE_KEY_2=second-account-private-key
-PRIVATE_KEY_3=third-account-private-key
-# ... (up to PRIVATE_KEY_6)
-
-# For Saga Chainlet
-SAGA_RPC_URL=https://your-saga-chainlet-rpc
-
-# For factory management
-FACTORY_ADDRESS=deployed-factory-address
-
-# For verification
-ETHERSCAN_API_KEY=your-etherscan-api-key
 ```
 
 ## 🔒 Security Features
@@ -315,60 +328,66 @@ ETHERSCAN_API_KEY=your-etherscan-api-key
 - **🔐 Access Control**: Role-based permissions with validation
 - **✅ Input Validation**: Comprehensive parameter checking
 - **🚨 Emergency Controls**: Pause, cancel, emergency recovery
-- **🧮 Safe Math**: Solidity 0.8+ overflow protection
-- **💎 Safe Transfers**: OpenZeppelin SafeERC20 usage
+- **💎 Safe Transfers**: OpenZeppelin SafeERC20 implementation
 
 ### **Governance Security**
-- **🎯 Voting Isolation**: Only authorized jury can vote
+- **🎯 Voting Isolation**: Only authorized jury members can vote
 - **⏰ Time Controls**: Deadlines and verification delays
-- **🔄 Transparent Process**: All actions emit events
-- **💰 Fund Protection**: Multiple withdrawal conditions
+- **🔄 Transparent Process**: All actions emit comprehensive events
+- **💰 Fund Protection**: Multiple withdrawal conditions and safeguards
 
-## 📊 **Contract Events**
+## 🎮 Demo Scenarios
 
-```solidity
-// Factory Events
-event RoundCreated(uint256 indexed roundId, address indexed roundContract, address indexed founder);
-event JurorAuthorized(address indexed juror);
-event JurorRevoked(address indexed juror);
-
-// Round Events
-event InvestorWhitelisted(address indexed investor);
-event InvestmentMade(address indexed investor, uint256 amount);
-event PhaseChanged(RoundPhase newPhase);
-event MilestoneDeadlineTriggered(uint256 indexed milestoneId, address indexed triggeredBy);
-event JuryVoteCast(uint256 indexed milestoneId, address indexed juror, bool approve);
-event MilestoneVotingFinalized(uint256 indexed milestoneId, MilestoneStatus result);
-event MilestoneCompleted(uint256 indexed milestoneId);
-event FundsReleased(uint256 indexed milestoneId, uint256 amount);
-event InvestmentWithdrawn(address indexed investor, uint256 amount);
+### **Successful Funding**
+```mermaid
+graph LR
+    A[Create Round] --> B[Whitelist Investors]
+    B --> C[Receive Funding]
+    C --> D[Trigger Milestone]
+    D --> E[Jury Votes]
+    E --> F[Complete Milestone]
+    F --> G[Release Funds]
+    
+    classDef success fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    class A,B,C,D,E,F,G success
 ```
 
-## 🎮 **Demo Scenarios**
+### **Partial Funding**
+```mermaid
+graph LR
+    A[Create Round] --> B[Partial Funding]
+    B --> C[Proportional Milestones]
+    C --> D[Scaled Fund Release]
+    
+    classDef partial fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    class A,B,C,D partial
+```
 
-### **Scenario 1: Successful Full Lifecycle**
-1. Create round with 2 milestones (40 ETH + 60 ETH)
-2. Complete funding (100 ETH total)
-3. Trigger first milestone deadline
-4. Jury approves (3/3 votes)
-5. Complete milestone and release 40 ETH
-6. Repeat for second milestone
-7. Project completed successfully
+### **Milestone Rejection**
+```mermaid
+graph LR
+    A[Trigger Milestone] --> B[Jury Votes]
+    B --> C[Milestone Rejected]
+    C --> D[Investor Withdrawal]
+    
+    classDef rejected fill:#ffebee,stroke:#d32f2f,stroke-width:2px
+    class A,B,C,D rejected
+```
 
-### **Scenario 2: Partial Funding Success**
-1. Create round targeting 100 ETH
-2. Only receive 60 ETH by deadline
-3. Move to execution phase with partial funding
-4. Jury votes on milestones considering reduced scope
-5. Proportional fund release (e.g., 24 ETH instead of 40 ETH)
+## 🏆 Built For ETH Global Cannes 2025
 
-### **Scenario 3: Milestone Rejection**
-1. Funding completed successfully
-2. First milestone deadline triggered
-3. Jury rejects milestone (2/3 votes against)
-4. Founder cannot complete milestone
-5. Investors withdraw remaining funds
-6. Project marked as failed
+### **Tech Stack**
+- **🔨 Hardhat 3**: Development framework
+- **🛡️ OpenZeppelin**: Security standards
+- **⚡ Ethers.js v6**: Ethereum library
+- **🌐 Saga Chainlet**: Deployment network
+- **📝 TypeScript**: Type safety
+
+### **Innovation Highlights**
+- **🏭 Factory Pattern**: Scalable round deployment
+- **⚖️ Jury Governance**: Decentralized milestone approval
+- **📊 Partial Funding**: Flexible funding thresholds
+- **🔄 Community Triggers**: Permissionless deadline activation
 
 ## 🤝 Contributing
 
@@ -378,28 +397,18 @@ event InvestmentWithdrawn(address indexed investor, uint256 amount);
 4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open Pull Request
 
-## 📝 License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🏆 **Built For**
-
-**ETH Global Cannes 2025** - Demonstrating innovative milestone-based funding with jury governance for early-stage ventures.
-
-### **Tech Stack**
-- 🔨 **Hardhat 3** - Development framework
-- 🛡️ **OpenZeppelin** - Security & standards
-- ⚡ **Viem** - Testing framework
-- 🌐 **Saga Chainlet** - Deployment network
-
 ---
 
-### 📋 **Key Principles**
+### 📋 Key Principles
 
-1. **💰 Funding Restriction**: Only add funds during initial phase
-2. **🗳️ Voting Restriction**: Only authorized jury votes (NOT founders/investors)  
+1. **💰 Funding Restriction**: Only invest during funding phase
+2. **🗳️ Voting Restriction**: Only authorized jury votes
 3. **⏰ Community Trigger**: Anyone can activate deadline voting
-4. **💎 Proportional Release**: Funds released proportionally to achieved funding
+4. **💎 Proportional Release**: Funds released proportionally to funding achieved
 5. **🚨 Emergency Safety**: Owner controls for critical situations
 
-**🎉 This system completely implements partial funding with jury governance!**
+**🎉 Complete milestone-based funding with jury governance!**
