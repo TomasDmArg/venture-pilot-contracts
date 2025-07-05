@@ -11,10 +11,24 @@
     "deploy:contracts": "hardhat ignition deploy ignition/modules/MoneyMule.ts --network localhost",
     "demo": "hardhat run scripts/demo-setup.ts",
     "demo:local": "hardhat run scripts/demo-setup.ts --network localhost",
+    "deploy:usdc": "hardhat run scripts/deploy-usdc.ts --network moneymule",
+    "deploy:usdc:local": "hardhat run scripts/deploy-usdc.ts --network localhost",
+    "mint:usdc": "hardhat run scripts/mint-usdc.ts --network moneymule",
+    "mint:usdc:local": "hardhat run scripts/mint-usdc.ts --network localhost",
+    "verify:usdc": "hardhat run scripts/verify-contract.ts --network moneymule",
+    "verify:usdc:local": "hardhat run scripts/verify-contract.ts --network localhost",
     "clean": "hardhat clean",
     "typechain": "hardhat typechain"
   },
-  "keywords": ["ethereum", "solidity", "hardhat", "defi", "funding", "milestone", "hackathon"],
+  "keywords": [
+    "ethereum",
+    "solidity",
+    "hardhat",
+    "defi",
+    "funding",
+    "milestone",
+    "hackathon"
+  ],
   "author": "MoneyMule Team",
   "license": "MIT",
   "devDependencies": {
@@ -22,6 +36,7 @@
     "hardhat": "^2.22.15"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.1.0"
+    "@openzeppelin/contracts": "^5.1.0",
+    "dotenv": "^17.0.1"
   }
 }

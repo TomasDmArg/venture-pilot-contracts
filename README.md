@@ -25,7 +25,6 @@ MoneyMule revolutionizes early-stage project funding by implementing a milestone
 - Git
 
 ### Installation
-
 ```bash
 # Clone the repository
 git clone https://github.com/TomasDmArg/money-mule-contracts.git
