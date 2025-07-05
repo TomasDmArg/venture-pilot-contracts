@@ -6,23 +6,26 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
   
 
   export interface MoneyMuleInterface extends Interface {
-    getFunction(nameOrSignature: "VERIFICATION_DELAY" | "cancelFundingRound" | "completeMilestone" | "createFundingRound" | "emergencyPause" | "fundingRounds" | "getFundingRound" | "getInvestmentAmount" | "getInvestorRounds" | "getNextMilestoneId" | "getNextRoundId" | "getRoundMilestones" | "invest" | "investorRounds" | "isWhitelisted" | "milestones" | "owner" | "paused" | "releaseFunds" | "renounceOwnership" | "roundMilestones" | "transferOwnership" | "unpause" | "whitelistInvestor" | "withdrawInvestment"): FunctionFragment;
+    getFunction(nameOrSignature: "VERIFICATION_DELAY" | "cancelFundingRound" | "completeMilestone" | "createFundingRound" | "emergencyPause" | "emergencyRecoverToken" | "fundingRounds" | "getFundingRound" | "getInvestmentAmount" | "getInvestorRounds" | "getLockedTokenAmount" | "getNextMilestoneId" | "getNextRoundId" | "getRoundMilestones" | "getRoundToken" | "invest" | "investorRounds" | "isWhitelisted" | "milestones" | "owner" | "paused" | "releaseFunds" | "renounceOwnership" | "roundMilestones" | "transferOwnership" | "unpause" | "whitelistInvestor" | "withdrawInvalidToken" | "withdrawInvestment"): FunctionFragment;
 
-    getEvent(nameOrSignatureOrTopic: "FundingRoundCancelled" | "FundingRoundCreated" | "FundsReleased" | "InvestmentMade" | "InvestmentWithdrawn" | "InvestorWhitelisted" | "MilestoneCompleted" | "OwnershipTransferred" | "Paused" | "Unpaused"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "FundingRoundCancelled" | "FundingRoundCreated" | "FundsReleased" | "InvalidTokenWithdrawn" | "InvestmentMade" | "InvestmentWithdrawn" | "InvestorWhitelisted" | "MilestoneCompleted" | "OwnershipTransferred" | "Paused" | "Unpaused"): EventFragment;
 
     encodeFunctionData(functionFragment: 'VERIFICATION_DELAY', values?: undefined): string;
 encodeFunctionData(functionFragment: 'cancelFundingRound', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'completeMilestone', values: [BigNumberish]): string;
-encodeFunctionData(functionFragment: 'createFundingRound', values: [BigNumberish, BigNumberish, string[], BigNumberish[]]): string;
+encodeFunctionData(functionFragment: 'createFundingRound', values: [AddressLike, BigNumberish, BigNumberish, string[], BigNumberish[]]): string;
 encodeFunctionData(functionFragment: 'emergencyPause', values?: undefined): string;
+encodeFunctionData(functionFragment: 'emergencyRecoverToken', values: [AddressLike, AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'fundingRounds', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'getFundingRound', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'getInvestmentAmount', values: [BigNumberish, AddressLike]): string;
 encodeFunctionData(functionFragment: 'getInvestorRounds', values: [AddressLike]): string;
+encodeFunctionData(functionFragment: 'getLockedTokenAmount', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'getNextMilestoneId', values?: undefined): string;
 encodeFunctionData(functionFragment: 'getNextRoundId', values?: undefined): string;
 encodeFunctionData(functionFragment: 'getRoundMilestones', values: [BigNumberish]): string;
-encodeFunctionData(functionFragment: 'invest', values: [BigNumberish]): string;
+encodeFunctionData(functionFragment: 'getRoundToken', values: [BigNumberish]): string;
+encodeFunctionData(functionFragment: 'invest', values: [BigNumberish, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'investorRounds', values: [AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'isWhitelisted', values: [BigNumberish, AddressLike]): string;
 encodeFunctionData(functionFragment: 'milestones', values: [BigNumberish]): string;
@@ -34,6 +37,7 @@ encodeFunctionData(functionFragment: 'roundMilestones', values: [BigNumberish, B
 encodeFunctionData(functionFragment: 'transferOwnership', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'unpause', values?: undefined): string;
 encodeFunctionData(functionFragment: 'whitelistInvestor', values: [BigNumberish, AddressLike]): string;
+encodeFunctionData(functionFragment: 'withdrawInvalidToken', values: [AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'withdrawInvestment', values: [BigNumberish]): string;
 
     decodeFunctionResult(functionFragment: 'VERIFICATION_DELAY', data: BytesLike): Result;
@@ -41,13 +45,16 @@ decodeFunctionResult(functionFragment: 'cancelFundingRound', data: BytesLike): R
 decodeFunctionResult(functionFragment: 'completeMilestone', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'createFundingRound', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'emergencyPause', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'emergencyRecoverToken', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'fundingRounds', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getFundingRound', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getInvestmentAmount', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getInvestorRounds', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'getLockedTokenAmount', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getNextMilestoneId', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getNextRoundId', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getRoundMilestones', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'getRoundToken', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'invest', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'investorRounds', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'isWhitelisted', data: BytesLike): Result;
@@ -60,6 +67,7 @@ decodeFunctionResult(functionFragment: 'roundMilestones', data: BytesLike): Resu
 decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'unpause', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'whitelistInvestor', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'withdrawInvalidToken', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'withdrawInvestment', data: BytesLike): Result;
   }
 
@@ -77,9 +85,9 @@ decodeFunctionResult(functionFragment: 'withdrawInvestment', data: BytesLike): R
   
 
     export namespace FundingRoundCreatedEvent {
-      export type InputTuple = [roundId: BigNumberish, founder: AddressLike, targetAmount: BigNumberish, deadline: BigNumberish, milestonesCount: BigNumberish];
-      export type OutputTuple = [roundId: bigint, founder: string, targetAmount: bigint, deadline: bigint, milestonesCount: bigint];
-      export interface OutputObject {roundId: bigint, founder: string, targetAmount: bigint, deadline: bigint, milestonesCount: bigint };
+      export type InputTuple = [roundId: BigNumberish, founder: AddressLike, token: AddressLike, targetAmount: BigNumberish, deadline: BigNumberish, milestonesCount: BigNumberish];
+      export type OutputTuple = [roundId: bigint, founder: string, token: string, targetAmount: bigint, deadline: bigint, milestonesCount: bigint];
+      export interface OutputObject {roundId: bigint, founder: string, token: string, targetAmount: bigint, deadline: bigint, milestonesCount: bigint };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -92,6 +100,18 @@ decodeFunctionResult(functionFragment: 'withdrawInvestment', data: BytesLike): R
       export type InputTuple = [milestoneId: BigNumberish, roundId: BigNumberish, amount: BigNumberish];
       export type OutputTuple = [milestoneId: bigint, roundId: bigint, amount: bigint];
       export interface OutputObject {milestoneId: bigint, roundId: bigint, amount: bigint };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace InvalidTokenWithdrawnEvent {
+      export type InputTuple = [user: AddressLike, token: AddressLike, amount: BigNumberish];
+      export type OutputTuple = [user: string, token: string, amount: bigint];
+      export interface OutputObject {user: string, token: string, amount: bigint };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -243,7 +263,7 @@ decodeFunctionResult(functionFragment: 'withdrawInvestment', data: BytesLike): R
 
     
     createFundingRound: TypedContractMethod<
-      [targetAmount: BigNumberish, deadline: BigNumberish, milestoneDescriptions: string[], milestoneFunding: BigNumberish[], ],
+      [token: AddressLike, targetAmount: BigNumberish, deadline: BigNumberish, milestoneDescriptions: string[], milestoneFunding: BigNumberish[], ],
       [bigint],
       'nonpayable'
     >
@@ -258,9 +278,17 @@ decodeFunctionResult(functionFragment: 'withdrawInvestment', data: BytesLike): R
     
 
     
+    emergencyRecoverToken: TypedContractMethod<
+      [token: AddressLike, to: AddressLike, amount: BigNumberish, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
     fundingRounds: TypedContractMethod<
       [arg0: BigNumberish, ],
-      [[bigint, string, bigint, bigint, bigint, bigint, bigint, bigint] & {id: bigint, founder: string, targetAmount: bigint, currentAmount: bigint, deadline: bigint, status: bigint, createdAt: bigint, milestonesCount: bigint }],
+      [[bigint, string, string, bigint, bigint, bigint, bigint, bigint, bigint] & {id: bigint, founder: string, token: string, targetAmount: bigint, currentAmount: bigint, deadline: bigint, status: bigint, createdAt: bigint, milestonesCount: bigint }],
       'view'
     >
     
@@ -268,7 +296,7 @@ decodeFunctionResult(functionFragment: 'withdrawInvestment', data: BytesLike): R
     
     getFundingRound: TypedContractMethod<
       [roundId: BigNumberish, ],
-      [[bigint, string, bigint, bigint, bigint, bigint, bigint, bigint] & {id: bigint, founder: string, targetAmount: bigint, currentAmount: bigint, deadline: bigint, status: bigint, createdAt: bigint, milestonesCount: bigint }],
+      [[bigint, string, string, bigint, bigint, bigint, bigint, bigint, bigint] & {id: bigint, founder: string, token: string, targetAmount: bigint, currentAmount: bigint, deadline: bigint, status: bigint, createdAt: bigint, milestonesCount: bigint }],
       'view'
     >
     
@@ -285,6 +313,14 @@ decodeFunctionResult(functionFragment: 'withdrawInvestment', data: BytesLike): R
     getInvestorRounds: TypedContractMethod<
       [investor: AddressLike, ],
       [bigint[]],
+      'view'
+    >
+    
+
+    
+    getLockedTokenAmount: TypedContractMethod<
+      [token: AddressLike, ],
+      [bigint],
       'view'
     >
     
@@ -314,10 +350,18 @@ decodeFunctionResult(functionFragment: 'withdrawInvestment', data: BytesLike): R
     
 
     
-    invest: TypedContractMethod<
+    getRoundToken: TypedContractMethod<
       [roundId: BigNumberish, ],
+      [string],
+      'view'
+    >
+    
+
+    
+    invest: TypedContractMethod<
+      [roundId: BigNumberish, amount: BigNumberish, ],
       [void],
-      'payable'
+      'nonpayable'
     >
     
 
@@ -410,6 +454,14 @@ decodeFunctionResult(functionFragment: 'withdrawInvestment', data: BytesLike): R
     
 
     
+    withdrawInvalidToken: TypedContractMethod<
+      [token: AddressLike, amount: BigNumberish, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
     withdrawInvestment: TypedContractMethod<
       [roundId: BigNumberish, ],
       [void],
@@ -436,7 +488,7 @@ getFunction(nameOrSignature: 'completeMilestone'): TypedContractMethod<
       'nonpayable'
     >;
 getFunction(nameOrSignature: 'createFundingRound'): TypedContractMethod<
-      [targetAmount: BigNumberish, deadline: BigNumberish, milestoneDescriptions: string[], milestoneFunding: BigNumberish[], ],
+      [token: AddressLike, targetAmount: BigNumberish, deadline: BigNumberish, milestoneDescriptions: string[], milestoneFunding: BigNumberish[], ],
       [bigint],
       'nonpayable'
     >;
@@ -445,14 +497,19 @@ getFunction(nameOrSignature: 'emergencyPause'): TypedContractMethod<
       [void],
       'nonpayable'
     >;
+getFunction(nameOrSignature: 'emergencyRecoverToken'): TypedContractMethod<
+      [token: AddressLike, to: AddressLike, amount: BigNumberish, ],
+      [void],
+      'nonpayable'
+    >;
 getFunction(nameOrSignature: 'fundingRounds'): TypedContractMethod<
       [arg0: BigNumberish, ],
-      [[bigint, string, bigint, bigint, bigint, bigint, bigint, bigint] & {id: bigint, founder: string, targetAmount: bigint, currentAmount: bigint, deadline: bigint, status: bigint, createdAt: bigint, milestonesCount: bigint }],
+      [[bigint, string, string, bigint, bigint, bigint, bigint, bigint, bigint] & {id: bigint, founder: string, token: string, targetAmount: bigint, currentAmount: bigint, deadline: bigint, status: bigint, createdAt: bigint, milestonesCount: bigint }],
       'view'
     >;
 getFunction(nameOrSignature: 'getFundingRound'): TypedContractMethod<
       [roundId: BigNumberish, ],
-      [[bigint, string, bigint, bigint, bigint, bigint, bigint, bigint] & {id: bigint, founder: string, targetAmount: bigint, currentAmount: bigint, deadline: bigint, status: bigint, createdAt: bigint, milestonesCount: bigint }],
+      [[bigint, string, string, bigint, bigint, bigint, bigint, bigint, bigint] & {id: bigint, founder: string, token: string, targetAmount: bigint, currentAmount: bigint, deadline: bigint, status: bigint, createdAt: bigint, milestonesCount: bigint }],
       'view'
     >;
 getFunction(nameOrSignature: 'getInvestmentAmount'): TypedContractMethod<
@@ -463,6 +520,11 @@ getFunction(nameOrSignature: 'getInvestmentAmount'): TypedContractMethod<
 getFunction(nameOrSignature: 'getInvestorRounds'): TypedContractMethod<
       [investor: AddressLike, ],
       [bigint[]],
+      'view'
+    >;
+getFunction(nameOrSignature: 'getLockedTokenAmount'): TypedContractMethod<
+      [token: AddressLike, ],
+      [bigint],
       'view'
     >;
 getFunction(nameOrSignature: 'getNextMilestoneId'): TypedContractMethod<
@@ -480,10 +542,15 @@ getFunction(nameOrSignature: 'getRoundMilestones'): TypedContractMethod<
       [bigint[]],
       'view'
     >;
-getFunction(nameOrSignature: 'invest'): TypedContractMethod<
+getFunction(nameOrSignature: 'getRoundToken'): TypedContractMethod<
       [roundId: BigNumberish, ],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'invest'): TypedContractMethod<
+      [roundId: BigNumberish, amount: BigNumberish, ],
       [void],
-      'payable'
+      'nonpayable'
     >;
 getFunction(nameOrSignature: 'investorRounds'): TypedContractMethod<
       [arg0: AddressLike, arg1: BigNumberish, ],
@@ -540,6 +607,11 @@ getFunction(nameOrSignature: 'whitelistInvestor'): TypedContractMethod<
       [void],
       'nonpayable'
     >;
+getFunction(nameOrSignature: 'withdrawInvalidToken'): TypedContractMethod<
+      [token: AddressLike, amount: BigNumberish, ],
+      [void],
+      'nonpayable'
+    >;
 getFunction(nameOrSignature: 'withdrawInvestment'): TypedContractMethod<
       [roundId: BigNumberish, ],
       [void],
@@ -549,6 +621,7 @@ getFunction(nameOrSignature: 'withdrawInvestment'): TypedContractMethod<
     getEvent(key: 'FundingRoundCancelled'): TypedContractEvent<FundingRoundCancelledEvent.InputTuple, FundingRoundCancelledEvent.OutputTuple, FundingRoundCancelledEvent.OutputObject>;
 getEvent(key: 'FundingRoundCreated'): TypedContractEvent<FundingRoundCreatedEvent.InputTuple, FundingRoundCreatedEvent.OutputTuple, FundingRoundCreatedEvent.OutputObject>;
 getEvent(key: 'FundsReleased'): TypedContractEvent<FundsReleasedEvent.InputTuple, FundsReleasedEvent.OutputTuple, FundsReleasedEvent.OutputObject>;
+getEvent(key: 'InvalidTokenWithdrawn'): TypedContractEvent<InvalidTokenWithdrawnEvent.InputTuple, InvalidTokenWithdrawnEvent.OutputTuple, InvalidTokenWithdrawnEvent.OutputObject>;
 getEvent(key: 'InvestmentMade'): TypedContractEvent<InvestmentMadeEvent.InputTuple, InvestmentMadeEvent.OutputTuple, InvestmentMadeEvent.OutputObject>;
 getEvent(key: 'InvestmentWithdrawn'): TypedContractEvent<InvestmentWithdrawnEvent.InputTuple, InvestmentWithdrawnEvent.OutputTuple, InvestmentWithdrawnEvent.OutputObject>;
 getEvent(key: 'InvestorWhitelisted'): TypedContractEvent<InvestorWhitelistedEvent.InputTuple, InvestorWhitelistedEvent.OutputTuple, InvestorWhitelistedEvent.OutputObject>;
@@ -563,12 +636,16 @@ getEvent(key: 'Unpaused'): TypedContractEvent<UnpausedEvent.InputTuple, Unpaused
       FundingRoundCancelled: TypedContractEvent<FundingRoundCancelledEvent.InputTuple, FundingRoundCancelledEvent.OutputTuple, FundingRoundCancelledEvent.OutputObject>;
     
 
-      'FundingRoundCreated(uint256,address,uint256,uint256,uint256)': TypedContractEvent<FundingRoundCreatedEvent.InputTuple, FundingRoundCreatedEvent.OutputTuple, FundingRoundCreatedEvent.OutputObject>;
+      'FundingRoundCreated(uint256,address,address,uint256,uint256,uint256)': TypedContractEvent<FundingRoundCreatedEvent.InputTuple, FundingRoundCreatedEvent.OutputTuple, FundingRoundCreatedEvent.OutputObject>;
       FundingRoundCreated: TypedContractEvent<FundingRoundCreatedEvent.InputTuple, FundingRoundCreatedEvent.OutputTuple, FundingRoundCreatedEvent.OutputObject>;
     
 
       'FundsReleased(uint256,uint256,uint256)': TypedContractEvent<FundsReleasedEvent.InputTuple, FundsReleasedEvent.OutputTuple, FundsReleasedEvent.OutputObject>;
       FundsReleased: TypedContractEvent<FundsReleasedEvent.InputTuple, FundsReleasedEvent.OutputTuple, FundsReleasedEvent.OutputObject>;
+    
+
+      'InvalidTokenWithdrawn(address,address,uint256)': TypedContractEvent<InvalidTokenWithdrawnEvent.InputTuple, InvalidTokenWithdrawnEvent.OutputTuple, InvalidTokenWithdrawnEvent.OutputObject>;
+      InvalidTokenWithdrawn: TypedContractEvent<InvalidTokenWithdrawnEvent.InputTuple, InvalidTokenWithdrawnEvent.OutputTuple, InvalidTokenWithdrawnEvent.OutputObject>;
     
 
       'InvestmentMade(uint256,address,uint256)': TypedContractEvent<InvestmentMadeEvent.InputTuple, InvestmentMadeEvent.OutputTuple, InvestmentMadeEvent.OutputObject>;

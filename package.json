@@ -14,6 +14,8 @@
     "demo:local": "hardhat run scripts/demo-setup.ts --network localhost",
     "deploy:usdc": "hardhat run scripts/deploy-usdc.ts --network moneymule",
     "deploy:usdc:local": "hardhat run scripts/deploy-usdc.ts --network localhost",
+    "deploy:moneymule": "hardhat run scripts/deploy-moneymule.ts --network moneymule",
+    "deploy:moneymule:local": "hardhat run scripts/deploy-moneymule.ts --network localhost",
     "mint:usdc": "hardhat run scripts/mint-usdc.ts --network moneymule",
     "mint:usdc:local": "hardhat run scripts/mint-usdc.ts --network localhost",
     "verify:usdc": "hardhat run scripts/verify-contract.ts --network moneymule",

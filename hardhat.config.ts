@@ -35,7 +35,14 @@ const config: HardhatUserConfig = {
     moneymule: {
       type: "http",
       url: process.env.MONEYMULE_RPC_URL || "https://moneymule-2751721147387000-1.jsonrpc.sagarpc.io",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: [
+        process.env.PRIVATE_KEY!,
+        process.env.PRIVATE_KEY_2!,
+        process.env.PRIVATE_KEY_3!,
+        process.env.PRIVATE_KEY_4!,
+        process.env.PRIVATE_KEY_5!,
+        process.env.PRIVATE_KEY_6!,
+      ],
       chainId: 2751721147387000,
       gasPrice: "auto",
     },

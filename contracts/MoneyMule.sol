@@ -4,13 +4,17 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @title MoneyMule
- * @dev Milestone-based funding platform for hackathon demonstration
+ * @dev Milestone-based funding platform with ERC20 token support
  * @author MoneyMule Team
  */
 contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
+    using SafeERC20 for IERC20;
+    
     // Enums
     enum FundingStatus { Active, Completed, Failed, Cancelled }
     enum MilestoneStatus { Pending, Completed, Failed, Disputed }
@@ -19,6 +23,7 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
     struct FundingRound {
         uint256 id;
         address founder;
+        address token; // ERC20 token address for this round
         uint256 targetAmount;
         uint256 currentAmount;
         uint256 deadline;
@@ -55,6 +60,7 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
     event FundingRoundCreated(
         uint256 indexed roundId,
         address indexed founder,
+        address indexed token,
         uint256 targetAmount,
         uint256 deadline,
         uint256 milestonesCount
@@ -66,6 +72,7 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
     event FundsReleased(uint256 indexed milestoneId, uint256 indexed roundId, uint256 amount);
     event InvestmentWithdrawn(uint256 indexed roundId, address indexed investor, uint256 amount);
     event FundingRoundCancelled(uint256 indexed roundId);
+    event InvalidTokenWithdrawn(address indexed user, address indexed token, uint256 amount);
     
     // Modifiers
     modifier onlyFounder(uint256 roundId) {
@@ -92,17 +99,20 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
 
     /**
      * @dev Create a new funding round with milestones
+     * @param token The ERC20 token address for this funding round
      * @param targetAmount The funding target amount
      * @param deadline The deadline for funding
      * @param milestoneDescriptions Array of milestone descriptions
      * @param milestoneFunding Array of funding amounts for each milestone
      */
     function createFundingRound(
+        address token,
         uint256 targetAmount,
         uint256 deadline,
         string[] calldata milestoneDescriptions,
         uint256[] calldata milestoneFunding
     ) external whenNotPaused returns (uint256) {
+        require(token != address(0), "Invalid token address");
         require(targetAmount > 0, "Target amount must be greater than 0");
         require(deadline > block.timestamp, "Deadline must be in the future");
         require(milestoneDescriptions.length > 0, "At least one milestone required");
@@ -121,6 +131,7 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
         FundingRound storage round = fundingRounds[roundId];
         round.id = roundId;
         round.founder = msg.sender;
+        round.token = token;
         round.targetAmount = targetAmount;
         round.deadline = deadline;
         round.status = FundingStatus.Active;
@@ -144,7 +155,7 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
             roundMilestones[roundId].push(milestoneId);
         }
         
-        emit FundingRoundCreated(roundId, msg.sender, targetAmount, deadline, milestoneDescriptions.length);
+        emit FundingRoundCreated(roundId, msg.sender, token, targetAmount, deadline, milestoneDescriptions.length);
         return roundId;
     }
 
@@ -166,12 +177,12 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
     }
 
     /**
-     * @dev Invest in a funding round
+     * @dev Invest in a funding round using ERC20 tokens
      * @param roundId The funding round ID
+     * @param amount The amount to invest
      */
-    function invest(uint256 roundId) 
+    function invest(uint256 roundId, uint256 amount) 
         external 
-        payable 
         validRound(roundId) 
         onlyWhitelisted(roundId) 
         nonReentrant 
@@ -181,27 +192,30 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
         
         require(round.status == FundingStatus.Active, "Round not active");
         require(block.timestamp <= round.deadline, "Deadline passed");
-        require(msg.value > 0, "Investment amount must be greater than 0");
-        require(round.currentAmount + msg.value <= round.targetAmount, "Exceeds target amount");
+        require(amount > 0, "Investment amount must be greater than 0");
+        require(round.currentAmount + amount <= round.targetAmount, "Exceeds target amount");
+        
+        // Transfer tokens from investor to contract
+        IERC20(round.token).safeTransferFrom(msg.sender, address(this), amount);
         
         // Record investment
         if (round.investments[msg.sender] == 0) {
             investorRounds[msg.sender].push(roundId);
         }
         
-        round.investments[msg.sender] += msg.value;
-        round.currentAmount += msg.value;
+        round.investments[msg.sender] += amount;
+        round.currentAmount += amount;
         
         // Check if funding is complete
         if (round.currentAmount == round.targetAmount) {
             round.status = FundingStatus.Completed;
         }
         
-        emit InvestmentMade(roundId, msg.sender, msg.value);
+        emit InvestmentMade(roundId, msg.sender, amount);
     }
 
     /**
-     * @dev Mark a milestone as completed (founder only)
+     * @dev Complete a milestone (founder only)
      * @param milestoneId The milestone ID
      */
     function completeMilestone(uint256 milestoneId) 
@@ -211,10 +225,11 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
     {
         Milestone storage milestone = milestones[milestoneId];
         uint256 roundId = milestone.roundId;
+        FundingRound storage round = fundingRounds[roundId];
         
-        require(fundingRounds[roundId].founder == msg.sender, "Not the founder");
+        require(round.founder == msg.sender, "Not the founder");
+        require(round.status == FundingStatus.Completed, "Round not completed");
         require(milestone.status == MilestoneStatus.Pending, "Milestone not pending");
-        require(fundingRounds[roundId].status == FundingStatus.Completed, "Round not completed");
         
         milestone.status = MilestoneStatus.Completed;
         milestone.completedAt = block.timestamp;
@@ -246,10 +261,9 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
         
         milestone.fundsReleased = true;
         
-        // Transfer funds to founder
+        // Transfer tokens to founder
         uint256 amount = milestone.fundingAmount;
-        (bool success, ) = payable(round.founder).call{value: amount}("");
-        require(success, "Transfer failed");
+        IERC20(round.token).safeTransfer(round.founder, amount);
         
         emit FundsReleased(milestoneId, roundId, amount);
     }
@@ -293,11 +307,103 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
         
         round.investments[msg.sender] = 0;
         
-        // Transfer funds back to investor
-        (bool success, ) = payable(msg.sender).call{value: withdrawableAmount}("");
-        require(success, "Transfer failed");
+        // Transfer tokens back to investor
+        IERC20(round.token).safeTransfer(msg.sender, withdrawableAmount);
         
         emit InvestmentWithdrawn(roundId, msg.sender, withdrawableAmount);
+    }
+
+    /**
+     * @dev Withdraw tokens that were sent to the contract by mistake
+     * @param token The token address to withdraw
+     * @param amount The amount to withdraw (0 means withdraw all available)
+     */
+    function withdrawInvalidToken(address token, uint256 amount) 
+        external 
+        nonReentrant 
+        whenNotPaused 
+    {
+        require(token != address(0), "Invalid token address");
+        
+        IERC20 tokenContract = IERC20(token);
+        uint256 contractBalance = tokenContract.balanceOf(address(this));
+        uint256 lockedAmount = getLockedTokenAmount(token);
+        uint256 availableAmount = contractBalance - lockedAmount;
+        
+        require(availableAmount > 0, "No tokens available to withdraw");
+        
+        uint256 withdrawAmount = amount;
+        if (withdrawAmount == 0 || withdrawAmount > availableAmount) {
+            withdrawAmount = availableAmount;
+        }
+        
+        // Transfer tokens back to user
+        tokenContract.safeTransfer(msg.sender, withdrawAmount);
+        
+        emit InvalidTokenWithdrawn(msg.sender, token, withdrawAmount);
+    }
+
+    /**
+     * @dev Emergency recovery of tokens (owner only)
+     * @param token The token address to recover
+     * @param to The address to send tokens to
+     * @param amount The amount to recover
+     */
+    function emergencyRecoverToken(address token, address to, uint256 amount) 
+        external 
+        onlyOwner 
+        nonReentrant 
+    {
+        require(token != address(0), "Invalid token address");
+        require(to != address(0), "Invalid recipient address");
+        require(amount > 0, "Amount must be greater than 0");
+        
+        IERC20(token).safeTransfer(to, amount);
+        
+        emit InvalidTokenWithdrawn(to, token, amount);
+    }
+
+    /**
+     * @dev Get the amount of tokens locked in active funding rounds
+     * @param token The token address
+     * @return The amount of tokens locked
+     */
+    function getLockedTokenAmount(address token) 
+        public 
+        view 
+        returns (uint256) 
+    {
+        uint256 totalLocked = 0;
+        
+        // Iterate through all funding rounds to calculate locked amounts
+        for (uint256 roundId = 1; roundId < _nextRoundId; roundId++) {
+            FundingRound storage round = fundingRounds[roundId];
+            
+            // Only count tokens from active or completed rounds with unreleased funds
+            if (round.token == token && 
+                (round.status == FundingStatus.Active || 
+                 round.status == FundingStatus.Completed)) {
+                
+                // Add current amount for active rounds
+                if (round.status == FundingStatus.Active) {
+                    totalLocked += round.currentAmount;
+                } else {
+                    // For completed rounds, add amount minus already released funds
+                    uint256 releasedAmount = 0;
+                    uint256[] memory milestoneIds = roundMilestones[roundId];
+                    
+                    for (uint256 i = 0; i < milestoneIds.length; i++) {
+                        if (milestones[milestoneIds[i]].fundsReleased) {
+                            releasedAmount += milestones[milestoneIds[i]].fundingAmount;
+                        }
+                    }
+                    
+                    totalLocked += (round.currentAmount - releasedAmount);
+                }
+            }
+        }
+        
+        return totalLocked;
     }
 
     /**
@@ -339,6 +445,7 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
         returns (
             uint256 id,
             address founder,
+            address token,
             uint256 targetAmount,
             uint256 currentAmount,
             uint256 deadline,
@@ -351,6 +458,7 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
         return (
             round.id,
             round.founder,
+            round.token,
             round.targetAmount,
             round.currentAmount,
             round.deadline,
@@ -401,5 +509,14 @@ contract MoneyMule is ReentrancyGuard, Ownable, Pausable {
 
     function getNextMilestoneId() external view returns (uint256) {
         return _nextMilestoneId;
+    }
+
+    function getRoundToken(uint256 roundId) 
+        external 
+        view 
+        validRound(roundId) 
+        returns (address) 
+    {
+        return fundingRounds[roundId].token;
     }
 } 
