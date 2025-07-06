@@ -14,7 +14,7 @@ A milestone-based funding platform with jury voting system for early-stage proje
 | Repository | Description | Status |
 |------------|-------------|--------|
 | **[Frontend](https://github.com/TomasDmArg/money-mule)** | Next.js web application with React & Material-UI | ✅ Active |
-| **[Backend](https://github.com/TomasDmArg/money-mule-backend)** | Node.js API with Express & PostgreSQL | ✅ Active |
+| **[Backend](https://github.com/TomasDmArg/money-mule-backend)** | AI Multiagent system for deck and document analysis | ✅ Active |
 | **[Smart Contracts](https://github.com/TomasDmArg/money-mule-contracts)** | Solidity contracts with Hardhat & TypeScript | ✅ Active |
 
 ## 🌟 Overview
