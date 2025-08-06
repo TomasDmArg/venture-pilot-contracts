@@ -1,4 +1,4 @@
-# MoneyMule Smart Contracts 🎯
+# VenturePilot Smart Contracts 🎯
 
 ![](https://img.shields.io/badge/Solidity-informational?style=flat&logo=solidity&logoColor=white&color=6aa6f8)
 ![](https://img.shields.io/badge/Hardhat-informational?style=flat&logo=hardhat&logoColor=white&color=6aa6f8)
@@ -9,7 +9,7 @@
 
 A milestone-based funding platform with jury voting system for early-stage projects. Built with Factory Pattern for scalability and advanced governance features.
 
-## 🏗️ MoneyMule Ecosystem
+## 🏗️ VenturePilot Ecosystem
 
 | Repository | Description | Status |
 |------------|-------------|--------|
@@ -19,23 +19,23 @@ A milestone-based funding platform with jury voting system for early-stage proje
 
 ## 🌟 Overview
 
-MoneyMule revolutionizes early-stage project funding by implementing a milestone-based approach where investors commit funds that are only released when specific project milestones are approved by an authorized jury. This system ensures accountability, reduces risk, and enables partial funding with community governance.
+VenturePilot revolutionizes early-stage project funding by implementing a milestone-based approach where investors commit funds that are only released when specific project milestones are approved by an authorized jury. This system ensures accountability, reduces risk, and enables partial funding with community governance.
 
 ## 🏗️ Architecture
 
 ```mermaid
 graph TB
     subgraph "Factory Layer"
-        Factory[MoneyMuleFactory]
+        Factory[VenturePilotFactory]
         Factory --> AuthorizeJurors[Authorize Jurors]
         Factory --> CreateRounds[Create Rounds]
         Factory --> TrackRounds[Track Rounds]
     end
     
     subgraph "Round Layer"
-        Round1[MoneyMuleRound #1]
-        Round2[MoneyMuleRound #2]
-        RoundN[MoneyMuleRound #N]
+        Round1[VenturePilotRound #1]
+        Round2[VenturePilotRound #2]
+        RoundN[VenturePilotRound #N]
     end
     
     subgraph "Governance"
@@ -163,7 +163,7 @@ npm run deploy:factory
 ### 🏭 Factory System
 | Contract | Address | Network |
 |----------|---------|---------|
-| **MoneyMuleFactory** | `0xa1820208Dff37B39a8a324e82E3449283e21703b` | Saga Chainlet |
+| **VenturePilotFactory** | `0xa1820208Dff37B39a8a324e82E3449283e21703b` | Saga Chainlet |
 | **USDC Token** | `0xA2bE65F0Bfb810eF7B17807F3cd10D428f989A4a` | Saga Chainlet |
 
 ### 🌐 Network Details
@@ -176,7 +176,7 @@ npm run deploy:factory
 ## 📚 Documentation
 
 ### 📖 Detailed Guides
-- **[📋 Smart Contract Documentation](.docs/MoneyMule.md)** - Complete technical documentation
+- **[📋 Smart Contract Documentation](.docs/VenturePilot.md)** - Complete technical documentation
 - **[🪙 USDC Token Guide](.docs/USDC.md)** - Token deployment and configuration
 
 ## 🎯 Core Workflow
@@ -288,7 +288,7 @@ SAGA_RPC_URL=https://moneymule-2751721147387000-1.jsonrpc.sagarpc.io
 
 ## 📋 Smart Contract API
 
-### **MoneyMuleFactory**
+### **VenturePilotFactory**
 ```solidity
 // Core Functions
 function createFundingRound(
@@ -307,7 +307,7 @@ function getFounderRounds(address founder) external view returns (uint256[] memo
 function isAuthorizedJuror(address juror) external view returns (bool);
 ```
 
-### **MoneyMuleRound**
+### **VenturePilotRound**
 ```solidity
 // Investment Functions
 function whitelistInvestor(address investor) external;
